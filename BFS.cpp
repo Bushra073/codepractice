@@ -33,6 +33,7 @@ int main()
     for(int i=0; i<m; i++)
     {
         int u,v;
+        cout << "Enter the edges:";
         cin >> u >> v;
         adj[u].push_back(v);
         adj[v].push_back(u);
