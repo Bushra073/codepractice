@@ -90,6 +90,7 @@ int main()
 
 
 
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -155,9 +156,13 @@ int main()
             {
                 // If this process has a smaller Remaining Time,
                 // make it the new selected process.
-                if(rt[i] < min_rt)        //if(rt[i] < min_rt || (rt[i] == min_rt && at[i] < at[idx]))
-                {                         //Choose this process if:
-                                          //it has a smaller Remaining Time, OR same RT but AT earlier
+                                             //[if(rt[i] < min_rt || (rt[i] == min_rt && at[i] < at[idx]))
+                                             //Choose this process if:
+                                             //it has a smaller Remaining Time,
+                                            //OR
+                                        //its Remaining Time is the same, but it arrived earlier]
+                if(rt[i] < min_rt)
+                {
                     min_rt = rt[i];
                     idx = i;
                 }
