@@ -123,6 +123,7 @@ int main()
     // Take Arrival Time and Burst Time of every process.
     for(int i = 0; i < n; i++)
     {
+        // Give process numbers P1, P2, P3...
         p[i] = i + 1;
 
         cout << "\nProcess P" << p[i] << endl;
@@ -133,8 +134,34 @@ int main()
         cout << "Burst Time: ";
         cin >> bt[i];
 
-        // Initially Remaining Time = Burst Time.
+        // Initially Remaining Time is equal to Burst Time.
         rt[i] = bt[i];
+    }
+
+    // Arrange the processes according to Arrival Time.
+    // This allows the code to work even if the question
+    // gives the processes in a random order.
+    for(int i = 0; i < n - 1; i++)
+    {
+        for(int j = 0; j < n - i - 1; j++)
+        {
+            // If the current process arrives later
+            // than the next process, swap them.
+            if(at[j] > at[j + 1])
+            {
+                // Swap Arrival Time.
+                swap(at[j], at[j + 1]);
+
+                // Swap Burst Time so it stays with its process.
+                swap(bt[j], bt[j + 1]);
+
+                // Swap Process Number.
+                swap(p[j], p[j + 1]);
+
+                // Swap Remaining Time as well.
+                swap(rt[j], rt[j + 1]);
+            }
+        }
     }
 
     // Create a queue to store the indexes of processes.
@@ -146,16 +173,24 @@ int main()
     // Counts how many processes have finished.
     int completed = 0;
 
-    // Stores the index of the next process that has not yet been added to the queue.
+    // Stores the index of the next process
+    // that has not yet been added to the queue.
     int next = 0;
+
+    // If the first process does not arrive at time 0,
+    // move the CPU time to its arrival time.
+    if(at[0] > time)
+    {
+        time = at[0];
+    }
 
     // Put the first process into the queue.
     q.push(0);
 
-    // The next process to check is P2 (index 1).
+    // The next process to check is index 1.
     next = 1;
 
-    // Keep running until the queue becomes empty.
+    // Keep running while there are processes in the queue.
     while(!q.empty())
     {
         // Take the process from the front of the queue.
@@ -164,20 +199,20 @@ int main()
         // Remove it from the queue because it is now using the CPU.
         q.pop();
 
-        // If the process cannot finish within one Time Quantum.
+        // If the process needs more than one Time Quantum.
         if(rt[i] > tq)
         {
             // CPU runs for one Time Quantum.
             time += tq;
 
-            // Reduce the Remaining Time.
+            // Reduce the Remaining Time by Time Quantum.
             rt[i] -= tq;
         }
 
-        // Otherwise, the process finishes.
+        // Otherwise, the process can finish in this turn.
         else
         {
-            // CPU runs for the remaining time only.
+            // CPU runs only for the remaining time.
             time += rt[i];
 
             // No work is left.
@@ -196,10 +231,14 @@ int main()
             completed++;
         }
 
-        // Add all newly arrived processes into the queue.
+        // Check for processes that have arrived while
+        // the current process was running.
         while(next < n && at[next] <= time)
         {
+            // Add the newly arrived process to the queue.
             q.push(next);
+
+            // Move to the next process.
             next++;
         }
 
@@ -210,15 +249,17 @@ int main()
             q.push(i);
         }
 
-        // If the queue becomes empty but there are still
-        // processes that have not arrived yet,
-        // jump the CPU time to the next arrival.
+        // If the queue is empty but there are still
+        // processes that have not arrived yet.
         if(q.empty() && next < n)
         {
+            // Move CPU time to the next arrival time.
             time = at[next];
 
+            // Put that process into the queue.
             q.push(next);
 
+            // Move to the next process.
             next++;
         }
     }
@@ -236,18 +277,21 @@ int main()
              << wt[i] << endl;
     }
 
-    // Calculate average Turnaround Time and Waiting Time.
+    // Variables for average Turnaround Time and Waiting Time.
     double avgTAT = 0, avgWT = 0;
 
+    // Add all TAT and WT values.
     for(int i = 0; i < n; i++)
     {
         avgTAT += tat[i];
         avgWT += wt[i];
     }
 
+    // Calculate the averages.
     avgTAT = avgTAT / n;
     avgWT = avgWT / n;
 
+    // Print the average values.
     cout << "\nAverage Turnaround Time = " << avgTAT << endl;
     cout << "Average Waiting Time = " << avgWT << endl;
 
